@@ -5,6 +5,14 @@ from airflow.contrib.hooks.aws_hook import AwsHook
 
 
 class LoadDimensionOperator(BaseOperator):
+    """
+    Runs query to load data into target dimension table in redshift
+    :param redshift_conn_id: Redshift connection id for access to redshift
+    :param table: table name
+    :param clear_previous: delete previous table entries
+    :param sql_query: sql query to perform transform and load operation
+    """
+
 
     @apply_defaults
     def __init__(self,
