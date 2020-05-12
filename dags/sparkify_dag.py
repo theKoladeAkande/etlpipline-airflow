@@ -25,7 +25,7 @@ default_args = {
 dag = DAG('sparkify_etl_dag',
           description='Performs ETL operations form S3 to Redshift',
           max_active_runs=3,
-          start_date=datetime(2020, 5, 10, 0,0,0,0)
+          start_date=datetime(2020, 6, 10, 0,0,0,0)
           )
 
 start_operator = DummyOperator(task_id='Begin_execution', dag=dag)
@@ -123,14 +123,14 @@ run_quality_checks_dimension = DataQualityOperator(
     tables=['users', 'artists', 'time', 'songs']
 )
 
-
-
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
 
 start_operator >> create_tables_task >> [stage_songs_task, stage_events_task]
 
 [stage_songs_task, stage_events_task] >> load_songs_play_fact_table
+
 load_songs_play_fact_table >> run_quality_checks_facts
+
 run_quality_checks_facts >> [load_artists_dimension_table, load_songs_dimension_table,
                              load_time_dimension_table, load_users_dimension_table]
 
