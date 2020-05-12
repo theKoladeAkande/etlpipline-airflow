@@ -8,6 +8,12 @@ FILE = pathlib.Path(__file__).resolve().parent /  'create_tables.sql'
 
 class CreateTableOperator(BaseOperator):
 
+    """
+    Loads sql create table queries from a file and runs them to create tables in redshift
+
+   :param redshift_conn_id: Redshift connection id for access to redshift
+   :param tables: A list of tables to be created
+    """
 
     @apply_defaults
     def  __init__(self,
