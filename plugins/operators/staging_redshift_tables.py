@@ -4,6 +4,18 @@ from airflow.utils.decorators import apply_defaults
 from airflow.contrib.hooks.aws_hook import AwsHook
 
 class StageTablesToRedshiftOperator(BaseOperator):
+    """
+    Interact with s3 to move data into staging tables in Redshift
+
+    :param redshift_conn_id: Redshift connection id for access to redshift
+    :param aws_credentials_id: Aws credentials id for access to aws
+    :param table: table name
+    :param s3_bucket: S3 bucket name
+    :param s3_key: S3 key name
+    :param region: S3 region
+    :param file_format: File format eg: JSON
+    """
+
     copy_sql = """
         COPY {}
         FROM '{}'
@@ -14,6 +26,7 @@ class StageTablesToRedshiftOperator(BaseOperator):
         TIMEFORMAT as 'epochmillisecs'
         FORMAT as JSON '{}'
     """
+
     @apply_defaults
     def  __init__(self,
                   redshift_conn_id="",
@@ -41,14 +54,14 @@ class StageTablesToRedshiftOperator(BaseOperator):
         credentials = aws_hook.get_credentials()
         redshift = PostgresHook(self.redshift_conn_id)
         s3_path =  f"s3://{self.s3_bucket}/{self.s3_key}/"
+
         self.log.info('Clearing data from destination Redshift table')
         redshift.run(f"DELETE FROM {self.table}")
 
-        if self.execution_date:
+        if self.execution_date: #Execution date for backfilling
             year = self.execution_date.year
             month = self.execution_date.month
             day = self.execution_date.day
-
             s3_path = f"s3://{self.s3_bucket}/{self.s3_key}/{year}/{month}/{day}/{self.s3_key}"
 
 
