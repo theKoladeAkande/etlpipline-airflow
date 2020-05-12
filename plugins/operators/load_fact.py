@@ -5,6 +5,13 @@ from airflow.contrib.hooks.aws_hook import AwsHook
 from airflow.hooks.postgres_hook import PostgresHook
 
 class LoadFactOperator(BaseOperator):
+    """
+    Runs sql queries for loading data into a fact table in redshift
+
+    :param redshift_conn_id: Redshift connection id for access to redshift
+    :param table: table name
+    :param sql_query: sql query to perform transform and load operation
+    """
 
 
     @apply_defaults
@@ -18,8 +25,6 @@ class LoadFactOperator(BaseOperator):
         self.redshift_conn_id = redshift_conn_id
         self.table = table
         self.sql_query = sql_query
-
-
 
     def execute(self, context):
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
