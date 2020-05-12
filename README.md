@@ -14,8 +14,11 @@ The source data resides in S3 and needs to be processed in the start-up's data w
 ### DAGs (Directed Acyclic Graphs)
 Dags are used in modeling and scheduling tasks and their depedencies,
 the dag for this project (sparkify_etl_dag) is modeled programatically with python using airflow.
+The image below is a directed acyclic graph for this project showing the various tasks and their dependencies
+![](https://github.com/theKoladeAkande/etlpipline-airflow/blob/master/airflow%20diagram.png)
 
-
+A tree view.
+![](https://github.com/theKoladeAkande/etlpipline-airflow/blob/master/tree%20view.png)
 
 
 ### TASKS AND OPERATORS
