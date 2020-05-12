@@ -4,6 +4,12 @@ from airflow.utils.decorators import apply_defaults
 
 
 class DataQualityOperator(BaseOperator):
+    """
+    Perform data quality checks  and validations on tables loaded in the database
+
+   :param redshift_conn_id: Redshift connection id for access to redshift
+   :param tables: A list of tables to perform data quality check
+    """
 
     @apply_defaults
     def __init__(self,
@@ -16,9 +22,10 @@ class DataQualityOperator(BaseOperator):
 
     def execute(self, context):
         redshift_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
+
         for table in self.tables:
             records = redshift_hook.get_records(f"SELECT COUNT(*) FROM {table}")
-            if len(records) < 1 or len(records[0]) < 1 or records[0][0] < 1:
+            if len(records) < 1 or len(records[0]) < 1 or records[0][0] < 1: #check for zero records
                 self.log.error(f"Error! {table} table has no record")
                 raise ValueError(f"Error! {table} table has no records ")
             self.log.info(f"Record checks passed {table} table has  {records[0][0]} records")
